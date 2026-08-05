@@ -285,9 +285,11 @@ h3 { font-size: 1.55rem; }
   border: 3px solid transparent;
 }
 .difficulty-card:hover { transform: translateY(-4px); border-color: #95c9a1; box-shadow: 0 12px 24px rgba(23, 63, 95, .12); }
+.difficulty-card.done { background: var(--mint); border-color: #81c995; }
 .difficulty-card strong { display: block; margin: 10px 0 8px; color: var(--navy); font-family: "Jua", sans-serif; font-size: 1.7rem; }
 .difficulty-card small { display: block; color: var(--muted); line-height: 1.55; }
 .difficulty-stars { color: #ed9b20; font-size: 1.25rem; letter-spacing: 3px; }
+.level-progress { margin: 18px 0 0; padding: 13px 16px; color: var(--green-dark); background: var(--mint); border-radius: 14px; }
 
 .game-layout { display: grid; grid-template-columns: 1fr 1.12fr; min-height: 660px; overflow: hidden; }
 .scene {
