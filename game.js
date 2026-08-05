@@ -24,16 +24,16 @@ const GAME_DATA = {
         normal: [
           { prompt: "ㅎㄱㄴ", answer: "한글날", hint: "우리 글자의 소중함을 기념하는 날이에요." },
           { prompt: "ㅈㅇㅂㅎ", answer: "자연보호", hint: "산, 강, 동식물을 아끼는 일이에요." },
-          { prompt: "ㅂㄹㅅ", answer: "분리수거", hint: "쓰레기를 종류별로 나누어 버리는 일이에요." },
-          { prompt: "ㄷㅅㄱ", answer: "독서감상", hint: "책을 읽고 느낀 점을 생각하는 일이에요." },
+          { prompt: "ㅂㄹㅅㄱ", answer: "분리수거", hint: "쓰레기를 종류별로 나누어 버리는 일이에요." },
+          { prompt: "ㄷㅅㄱㅅㅁ", answer: "독서감상문", hint: "책을 읽고 느낀 점을 쓴 글이에요." },
           { prompt: "ㅎㄱㅅ", answer: "호기심", hint: "새로운 것을 알고 싶어 하는 마음이에요." }
         ],
         hard: [
-          { prompt: "ㅍㄹㄱㅍ", answer: "플라스틱", hint: "가볍고 여러 모양으로 만들 수 있지만, 줄여 써야 하는 물질이에요." },
-          { prompt: "ㄱㅎㅈ", answer: "과학자", hint: "자연의 원리를 연구하는 사람이에요." },
-          { prompt: "ㅇㅁㅍㅎ", answer: "의문표현", hint: "모르는 것을 묻거나 궁금함을 나타내는 말이에요." },
-          { prompt: "ㅎㄱㅂㅈ", answer: "환경보전", hint: "자연환경을 잘 지키고 가꾸는 일이에요." },
-          { prompt: "ㅈㅅㄱㄴ", answer: "재생가능", hint: "다시 만들어 쓰거나 되살릴 수 있다는 뜻이에요." }
+          { prompt: "ㅊㄷㅎㄱ", answer: "초등학교", hint: "어린이들이 다니는 학교예요." },
+          { prompt: "ㅇㄹㅇㄴ", answer: "어린이날", hint: "5월 5일에 어린이를 축하하는 날이에요." },
+          { prompt: "ㄱㅌㅇㅈ", answer: "교통안전", hint: "길을 다닐 때 꼭 지켜야 해요." },
+          { prompt: "ㅁㅅㅁㅈ", answer: "미세먼지", hint: "공기 중에 떠다니는 아주 작은 먼지예요." },
+          { prompt: "ㅎㄱㅅㅎ", answer: "학교생활", hint: "학교에서 공부하고 친구들과 지내는 일이에요." }
         ]
       }
     },
@@ -99,11 +99,11 @@ const GAME_DATA = {
           { prompt: "약속", answer: "속담", choices: ["속담", "담요", "언어"], hint: "‘속’으로 시작하는 옛사람들의 지혜예요." }
         ],
         hard: [
-          { prompt: "플라스틱", answer: "틱톡", choices: ["라디오", "틱톡", "크레파스"], hint: "‘틱’으로 시작하는 짧은 영상 서비스 이름이에요." },
-          { prompt: "이산화탄소", answer: "소나기", choices: ["기러기", "소나기", "탄소"], hint: "‘소’로 시작하고 갑자기 세게 내리는 비예요." },
-          { prompt: "생태계", answer: "계단", choices: ["단풍", "환경", "계단"], hint: "‘계’로 시작하고 위아래로 오를 때 이용해요." },
-          { prompt: "재활용품", answer: "품질", choices: ["질문", "품질", "용품"], hint: "‘품’으로 시작하며 물건이 얼마나 좋은지를 나타내요." },
-          { prompt: "친환경", answer: "경험", choices: ["환경", "경험", "험담"], hint: "‘경’으로 시작하며 직접 겪어 본 일이에요." }
+          { prompt: "기차역", answer: "역할", choices: ["기차", "역할", "학교"], hint: "‘역’으로 시작하며 자기가 맡은 일을 뜻해요." },
+          { prompt: "운동장", answer: "장난감", choices: ["장난감", "자동차", "운동화"], hint: "‘장’으로 시작하며 가지고 노는 물건이에요." },
+          { prompt: "그림책", answer: "책상", choices: ["그림", "연필", "책상"], hint: "‘책’으로 시작하며 공부할 때 사용하는 가구예요." },
+          { prompt: "자전거", answer: "거울", choices: ["거울", "자전거", "울타리"], hint: "‘거’로 시작하며 내 모습을 비추어 봐요." },
+          { prompt: "놀이터", answer: "터널", choices: ["널뛰기", "터널", "미끄럼틀"], hint: "‘터’로 시작하며 산이나 땅속을 뚫은 길이에요." }
         ]
       }
     }
@@ -115,7 +115,14 @@ const GAME_DATA = {
   }
 };
 
-const defaultProgress = { unlocked: 0, completed: [], leaves: 0, sound: true };
+const PROGRESS_VERSION = 2;
+const defaultProgress = {
+  version: PROGRESS_VERSION,
+  unlocked: 0,
+  completedDifficulties: { choseong: [], proverb: [], wordchain: [] },
+  leaves: 0,
+  sound: true
+};
 let progress = loadProgress();
 let session = null;
 let timerId = null;
@@ -129,10 +136,43 @@ const soundButton = document.querySelector("#sound-button");
 function loadProgress() {
   try {
     const saved = JSON.parse(localStorage.getItem("koreanRescueProgress"));
-    return { ...defaultProgress, ...saved, completed: Array.isArray(saved?.completed) ? saved.completed : [] };
+    if (saved?.version !== PROGRESS_VERSION) {
+      return {
+        ...defaultProgress,
+        completedDifficulties: { choseong: [], proverb: [], wordchain: [] },
+        leaves: Number(saved?.leaves) || 0,
+        sound: saved?.sound !== false
+      };
+    }
+    const completedDifficulties = {};
+    for (const stage of GAME_DATA.stages) {
+      const savedLevels = saved.completedDifficulties?.[stage.id];
+      completedDifficulties[stage.id] = Array.isArray(savedLevels)
+        ? savedLevels.filter(level => Object.hasOwn(GAME_DATA.difficulties, level))
+        : [];
+    }
+    let fullyClearedCount = 0;
+    for (const stage of GAME_DATA.stages) {
+      if (completedDifficulties[stage.id].length !== 3) break;
+      fullyClearedCount += 1;
+    }
+    return {
+      ...defaultProgress,
+      ...saved,
+      unlocked: Math.min(GAME_DATA.stages.length - 1, fullyClearedCount),
+      completedDifficulties
+    };
   } catch {
-    return { ...defaultProgress };
+    return { ...defaultProgress, completedDifficulties: { choseong: [], proverb: [], wordchain: [] } };
   }
+}
+
+function clearedLevels(stageId) {
+  return progress.completedDifficulties?.[stageId] || [];
+}
+
+function isStageFullyCleared(stageId) {
+  return clearedLevels(stageId).length === Object.keys(GAME_DATA.difficulties).length;
 }
 
 function saveProgress() {
@@ -193,15 +233,17 @@ function renderPrologue() {
 function renderMap() {
   const cards = GAME_DATA.stages.map((stage, index) => {
     const locked = index > progress.unlocked;
-    const completed = progress.completed.includes(stage.id);
+    const clearedCount = clearedLevels(stage.id).length;
+    const completed = isStageFullyCleared(stage.id);
+    const statusText = completed ? "✓ 3단계 정화 완료" : locked ? "🔒 잠김" : `난이도 ${clearedCount}/3 완료`;
     return `
       <article class="stage-card ${locked ? "locked" : ""} ${completed ? "completed" : ""}">
         <span class="stage-number">STAGE ${index + 1}</span>
-        <span class="status-badge ${completed ? "clear" : ""}">${completed ? "✓ 정화 완료" : locked ? "🔒 잠김" : "도전 가능"}</span>
+        <span class="status-badge ${completed ? "clear" : ""}">${statusText}</span>
         <span class="stage-icon" aria-hidden="true">${stage.icon}</span>
         <h3>${stage.title}</h3>
         <p>${stage.story}</p>
-        <button class="${locked ? "secondary-button" : "primary-button"}" type="button" data-action="difficulty" data-stage="${index}" ${locked ? "disabled" : ""}>${completed ? "다시 도전하기" : locked ? "앞 나라를 먼저 구해요" : "입장하기"}</button>
+        <button class="${locked ? "secondary-button" : "primary-button"}" type="button" data-action="difficulty" data-stage="${index}" ${locked ? "disabled" : ""}>${completed ? "다시 도전하기" : locked ? "앞 나라의 3개 난이도를 먼저 완료해요" : clearedCount ? "남은 난이도 도전하기" : "입장하기"}</button>
       </article>`;
   }).join("");
 
@@ -209,7 +251,7 @@ function renderMap() {
     <section class="screen">
       <div class="section-head">
         <div><p class="eyebrow">모험 지도</p><h2>어느 나라를 구할까요?</h2></div>
-        <p>한 나라를 깨끗하게 만들면 다음 길이 열려요. 높은 난이도일수록 새싹을 더 많이 받을 수 있어요.</p>
+        <p>한 나라의 <strong>초급·중급·고급을 모두 완료</strong>하면 다음 길이 열려요. 높은 난이도일수록 새싹을 더 많이 받을 수 있어요.</p>
       </div>
       <div class="stage-grid">${cards}</div>
       <div class="button-row">
@@ -224,19 +266,22 @@ function renderDifficulty(stageIndex) {
   if (!stage || stageIndex > progress.unlocked) return renderMap();
   const cards = Object.entries(GAME_DATA.difficulties).map(([key, diff]) => {
     const time = stage.times[key];
+    const cleared = clearedLevels(stage.id).includes(key);
     const support = key === "easy" ? "힌트가 항상 보여요." : key === "normal" ? "힌트 단추를 2번 쓸 수 있어요." : "힌트 없이 도전해요.";
     return `
-      <button class="difficulty-card" type="button" data-action="start-game" data-stage="${stageIndex}" data-difficulty="${key}">
+      <button class="difficulty-card ${cleared ? "done" : ""}" type="button" data-action="start-game" data-stage="${stageIndex}" data-difficulty="${key}">
         <span class="difficulty-stars">${diff.stars}</span>
-        <strong>${diff.name}</strong>
+        <strong>${diff.name} ${cleared ? "✓" : ""}</strong>
         <small>${diff.label}<br>${support}<br>${time ? `문제마다 ${time}초` : "시간 제한 없음"} · 정답마다 🌱 ${diff.reward}개</small>
       </button>`;
   }).join("");
+  const clearedCount = clearedLevels(stage.id).length;
   setScreen(`
     <section class="screen difficulty-panel">
       <p class="eyebrow">${stage.icon} ${stage.title}</p>
       <h2>도전할 난이도를 골라요</h2>
       <p>${stage.story}</p>
+      <p class="level-progress"><strong>${clearedCount}/3 완료</strong> · 세 난이도를 모두 완료하면 다음 나라가 열려요.</p>
       <div class="difficulty-grid">${cards}</div>
       <div class="button-row"><button class="secondary-button" type="button" data-action="map">지도에서 다시 고르기</button></div>
     </section>`);
@@ -400,9 +445,14 @@ function finishStage() {
   clearTimer();
   const stage = GAME_DATA.stages[session.stageIndex];
   const total = stage.questions[session.difficulty].length;
-  const firstClear = !progress.completed.includes(stage.id);
-  if (firstClear) progress.completed.push(stage.id);
-  progress.unlocked = Math.min(GAME_DATA.stages.length - 1, Math.max(progress.unlocked, session.stageIndex + 1));
+  const stageLevels = clearedLevels(stage.id);
+  const firstLevelClear = !stageLevels.includes(session.difficulty);
+  if (firstLevelClear) stageLevels.push(session.difficulty);
+  progress.completedDifficulties[stage.id] = stageLevels;
+  const stageFullyCleared = isStageFullyCleared(stage.id);
+  if (stageFullyCleared) {
+    progress.unlocked = Math.min(GAME_DATA.stages.length - 1, Math.max(progress.unlocked, session.stageIndex + 1));
+  }
   progress.leaves += session.earned;
   saveProgress();
   launchConfetti();
@@ -412,20 +462,24 @@ function finishStage() {
   setScreen(`
     <section class="screen result-card">
       <div class="result-icon" aria-hidden="true">${stage.rescueIcon}</div>
-      <p class="eyebrow">${stage.title} 정화 완료!</p>
-      <h2>${stage.rescue === "평화" ? "악당 나무와 이야기할 길이 열렸어요!" : `${stage.rescue}를 찾았어요!`}</h2>
+      <p class="eyebrow">${stage.title} ${GAME_DATA.difficulties[session.difficulty].name} 완료!</p>
+      <h2>${stageFullyCleared ? (stage.rescue === "평화" ? "악당 나무와 이야기할 길이 열렸어요!" : `${stage.rescue}를 찾았어요!`) : `난이도 ${stageLevels.length}/3 완료!`}</h2>
       <div class="score-ring" style="--score-angle:${accuracy * 3.6}deg"><strong>${accuracy}%</strong></div>
-      <p>모든 문제의 정답을 찾아냈어요. 틀려도 다시 도전한 용기가 정말 멋져요!</p>
+      <p>${stageFullyCleared ? "세 난이도의 모든 문제를 해결해 이 나라를 완전히 깨끗하게 만들었어요!" : "모든 문제의 정답을 찾아냈어요. 남은 난이도에도 도전해 이 나라를 완전히 깨끗하게 만들어요!"}</p>
       <p class="reward-line">이번 모험에서 새싹 🌱 ${session.earned}개를 모았어요.</p>
       <div class="button-row" style="justify-content:center">
-        ${session.stageIndex === GAME_DATA.stages.length - 1 ? `<button class="primary-button" type="button" data-action="ending">마지막 이야기 보기</button>` : `<button class="primary-button" type="button" data-action="map">다음 나라로 가기</button>`}
-        <button class="secondary-button" type="button" data-action="difficulty" data-stage="${session.stageIndex}">다른 난이도 도전</button>
+        ${stageFullyCleared
+          ? session.stageIndex === GAME_DATA.stages.length - 1
+            ? `<button class="primary-button" type="button" data-action="ending">마지막 이야기 보기</button>`
+            : `<button class="primary-button" type="button" data-action="map">다음 나라로 가기</button>`
+          : `<button class="primary-button" type="button" data-action="difficulty" data-stage="${session.stageIndex}">남은 난이도 도전하기</button>`}
+        <button class="secondary-button" type="button" data-action="map">모험 지도 보기</button>
       </div>
     </section>`);
 }
 
 function renderEnding() {
-  if (!progress.completed.includes("wordchain")) return renderMap();
+  if (!isStageFullyCleared("wordchain")) return renderMap();
   setScreen(`
     <section class="screen ending-card">
       <p class="eyebrow">우리 모두의 해피 엔딩</p>
@@ -444,7 +498,11 @@ function renderEnding() {
 
 function resetProgress() {
   if (!window.confirm("모은 새싹과 완료 기록을 모두 지우고 처음부터 시작할까요?")) return;
-  progress = { ...defaultProgress, completed: [], sound: progress.sound };
+  progress = {
+    ...defaultProgress,
+    completedDifficulties: { choseong: [], proverb: [], wordchain: [] },
+    sound: progress.sound
+  };
   saveProgress();
   showToast("기록을 새로 시작했어요!");
   renderMap();
