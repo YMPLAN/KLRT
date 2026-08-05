@@ -7,6 +7,7 @@ const GAME_DATA = {
       title: "초성나라",
       subtitle: "매연 마을을 맑게!",
       icon: "🏭",
+      image: "assets/images/stage-choseong.webp",
       cleaner: "🧒🏻🫧",
       pollution: ["💨", "🏭", "🌫️", "💨"],
       story: "친환경 필터에 알맞은 단어를 넣어 매연을 깨끗한 공기로 바꿔요. 모든 문제를 풀면 비밀의 방에서 엄마를 찾을 수 있어요!",
@@ -42,6 +43,7 @@ const GAME_DATA = {
       title: "속담나라",
       subtitle: "바닷속 신전을 깨끗하게!",
       icon: "🏛️",
+      image: "assets/images/stage-proverb.webp",
       cleaner: "🤿",
       pollution: ["🥤", "🛍️", "🥫", "🧴"],
       story: "속담의 뜻을 생각해 정답을 고르면 잠수복을 입은 주인공이 쓰레기를 주워요. 신전이 다시 보이면 아빠를 만날 수 있어요!",
@@ -77,6 +79,7 @@ const GAME_DATA = {
       title: "용암 끝말잇기",
       subtitle: "말을 이어 용암을 식혀라!",
       icon: "🌋",
+      image: "assets/images/stage-wordchain.webp",
       cleaner: "☁️🌧️",
       pollution: ["🔥", "🗑️", "🔥", "🧨"],
       story: "악당 나무가 낸 말의 마지막 글자로 시작하는 단어를 골라요. 정답을 맞히면 물주머니와 비구름이 뜨거운 용암을 식혀 줘요!",
@@ -109,9 +112,9 @@ const GAME_DATA = {
     }
   ],
   difficulties: {
-    easy: { name: "초급", stars: "★☆☆", label: "힌트와 함께 천천히", reward: 3 },
-    normal: { name: "중급", stars: "★★☆", label: "힌트는 2번, 조금 더 빠르게", reward: 5 },
-    hard: { name: "고급", stars: "★★★", label: "짧은 시간 안에 도전", reward: 8 }
+    easy: { name: "초급", icon: "🐣", stars: "★☆☆", label: "힌트와 함께 천천히", reward: 3 },
+    normal: { name: "중급", icon: "🚀", stars: "★★☆", label: "힌트는 2번, 조금 더 빠르게", reward: 5 },
+    hard: { name: "고급", icon: "👑", stars: "★★★", label: "짧은 시간 안에 도전", reward: 8 }
   }
 };
 
@@ -206,12 +209,10 @@ function renderHome() {
           <button class="secondary-button" type="button" data-action="map">이어 하기</button>
         </div>
       </div>
-      <div class="hero-art" aria-label="동글동글 지구와 주인공, 가족, 악당 나무">
+      <div class="hero-art" aria-label="동글동글 가족과 악당 나무의 환경 모험">
+        <img class="hero-image" src="assets/images/hero-adventure.webp" width="900" height="900" alt="오염된 마을과 깨끗한 자연 사이에 선 주인공 가족과 악당 나무">
         <div class="speech-bubble">국어의 힘이 필요해!</div>
-        <div class="world-orb"></div>
-        <div class="round-person hero-kid" aria-hidden="true">🧒🏻</div>
-        <div class="round-person family" aria-hidden="true">👨‍👩‍👦</div>
-        <div class="villain-tree" aria-hidden="true">🌳</div>
+        <div class="hero-sticker" aria-hidden="true">🌱 출동!</div>
       </div>
     </section>`);
 }
@@ -221,7 +222,7 @@ function renderPrologue() {
     <section class="screen story-card">
       <p class="eyebrow">이야기의 시작</p>
       <h2>악당 나무에게 무슨 일이 있었을까요?</h2>
-      <div class="story-visual" aria-hidden="true"><span>🏭💨</span><span class="story-arrow">➜</span><span>🌳😢</span><span class="story-arrow">➜</span><span>🌳😠</span></div>
+      <img class="story-image" src="assets/images/hero-adventure.webp" width="900" height="900" alt="오염으로 슬퍼진 나무와 자연을 되살리려는 동글동글 가족">
       <p>동글동글 나라의 매연과 쓰레기 때문에 나무나라의 나무들이 아팠어요. 마지막으로 남은 나무는 너무 화가 나 악당이 되었고, 엄마와 아빠를 데려갔지요. 하지만 싸움보다 더 좋은 해결 방법이 있어요. 국어 퀴즈를 풀어 환경을 깨끗하게 만들고, 나무나라에 진심으로 사과해요!</p>
       <div class="button-row" style="justify-content:center">
         <button class="primary-button" type="button" data-action="map">나라 지도로 출발!</button>
@@ -238,12 +239,20 @@ function renderMap() {
     const statusText = completed ? "✓ 3단계 정화 완료" : locked ? "🔒 잠김" : `난이도 ${clearedCount}/3 완료`;
     return `
       <article class="stage-card ${locked ? "locked" : ""} ${completed ? "completed" : ""}">
-        <span class="stage-number">STAGE ${index + 1}</span>
-        <span class="status-badge ${completed ? "clear" : ""}">${statusText}</span>
-        <span class="stage-icon" aria-hidden="true">${stage.icon}</span>
-        <h3>${stage.title}</h3>
-        <p>${stage.story}</p>
-        <button class="${locked ? "secondary-button" : "primary-button"}" type="button" data-action="difficulty" data-stage="${index}" ${locked ? "disabled" : ""}>${completed ? "다시 도전하기" : locked ? "앞 나라의 3개 난이도를 먼저 완료해요" : clearedCount ? "남은 난이도 도전하기" : "입장하기"}</button>
+        <div class="stage-preview">
+          <img src="${stage.image}" width="1280" height="720" alt="${stage.title} - ${stage.subtitle}" loading="lazy">
+          <span class="stage-number">STAGE ${index + 1}</span>
+          <span class="status-badge ${completed ? "clear" : ""}">${statusText}</span>
+          ${locked ? `<span class="lock-cover" aria-hidden="true">🔒</span>` : ""}
+        </div>
+        <div class="stage-content">
+          <span class="stage-icon-chip" aria-hidden="true">${stage.icon}</span>
+          <h3>${stage.title}</h3>
+          <strong class="stage-subtitle">${stage.subtitle}</strong>
+          <p>${stage.story}</p>
+          <div class="mini-progress" aria-label="난이도 ${clearedCount}개 완료"><span style="--mini:${clearedCount / 3 * 100}%"></span></div>
+          <button class="${locked ? "secondary-button" : "primary-button"}" type="button" data-action="difficulty" data-stage="${index}" ${locked ? "disabled" : ""}>${completed ? "다시 도전하기" : locked ? "앞 나라의 3개 난이도를 먼저 완료해요" : clearedCount ? "남은 난이도 도전하기" : "입장하기"}</button>
+        </div>
       </article>`;
   }).join("");
 
@@ -270,6 +279,7 @@ function renderDifficulty(stageIndex) {
     const support = key === "easy" ? "힌트가 항상 보여요." : key === "normal" ? "힌트 단추를 2번 쓸 수 있어요." : "힌트 없이 도전해요.";
     return `
       <button class="difficulty-card ${cleared ? "done" : ""}" type="button" data-action="start-game" data-stage="${stageIndex}" data-difficulty="${key}">
+        <span class="difficulty-icon" aria-hidden="true">${diff.icon}</span>
         <span class="difficulty-stars">${diff.stars}</span>
         <strong>${diff.name} ${cleared ? "✓" : ""}</strong>
         <small>${diff.label}<br>${support}<br>${time ? `문제마다 ${time}초` : "시간 제한 없음"} · 정답마다 🌱 ${diff.reward}개</small>
@@ -278,9 +288,10 @@ function renderDifficulty(stageIndex) {
   const clearedCount = clearedLevels(stage.id).length;
   setScreen(`
     <section class="screen difficulty-panel">
-      <p class="eyebrow">${stage.icon} ${stage.title}</p>
-      <h2>도전할 난이도를 골라요</h2>
-      <p>${stage.story}</p>
+      <div class="difficulty-intro">
+        <img src="${stage.image}" width="1280" height="720" alt="${stage.title} 모험 장면">
+        <div><p class="eyebrow">${stage.icon} ${stage.title}</p><h2>도전할 난이도를 골라요</h2><p>${stage.story}</p></div>
+      </div>
       <p class="level-progress"><strong>${clearedCount}/3 완료</strong> · 세 난이도를 모두 완료하면 다음 나라가 열려요.</p>
       <div class="difficulty-grid">${cards}</div>
       <div class="button-row"><button class="secondary-button" type="button" data-action="map">지도에서 다시 고르기</button></div>
@@ -315,23 +326,25 @@ function renderQuestion() {
   const isTextInput = stage.id === "choseong";
   const questionClass = stage.id === "proverb" ? "question-main proverb-text" : "question-main";
   const label = stage.id === "choseong" ? "초성을 보고 단어를 써요" : stage.id === "proverb" ? "뜻에 맞는 속담을 골라요" : "마지막 글자로 시작하는 말을 골라요";
-  const autoHint = session.difficulty === "easy" ? question.hint : "힌트가 필요하면 아래 단추를 눌러요.";
-  const choices = question.choices?.map(choice => `<button class="answer-button" type="button" data-action="answer-choice" data-answer="${escapeAttr(choice)}">${choice}</button>`).join("") || "";
+  const autoHint = session.difficulty === "easy"
+    ? question.hint
+    : session.difficulty === "normal"
+      ? "힌트가 필요하면 아래 단추를 눌러요."
+      : "고급은 힌트 없이 도전해요. 문제를 잘 읽어 보세요!";
+  const choices = question.choices?.map((choice, index) => `<button class="answer-button" type="button" data-action="answer-choice" data-answer="${escapeAttr(choice)}"><span class="choice-number">${index + 1}</span><span>${choice}</span></button>`).join("") || "";
   const timer = stage.times[session.difficulty];
-  const sceneCharacter = stage.id === "wordchain"
-    ? session.difficulty === "easy" ? "👩🏻 🧒🏻 👨🏻 ☁️🌧️" : session.difficulty === "normal" ? "🧒🏻 ☁️🌧️" : "☁️🌧️"
-    : stage.cleaner;
+  const questionSteps = questions.map((_, index) => `<span class="question-step ${index < session.index ? "done" : index === session.index ? "current" : ""}">${index < session.index ? "✓" : index + 1}</span>`).join("");
 
   setScreen(`
     <section class="screen game-layout">
       <div class="scene ${stage.id}" style="--pollution:${pollution};--clean:${cleanPercent}%;--trash-opacity:${1 - cleanPercent / 120}">
         <div class="scene-title"><strong>${stage.icon} ${stage.title}</strong><span class="clean-label">정화 ${cleanPercent}%</span></div>
-        <div class="scene-art"><span class="cleaner" aria-hidden="true">${sceneCharacter}</span></div>
-        <div class="pollution-items" aria-hidden="true">${stage.pollution.map(item => `<span>${item}</span>`).join("")}</div>
+        <div class="scene-message"><span aria-hidden="true">✨</span><strong>${session.index === 0 ? "정화를 시작해요!" : "점점 깨끗해져요!"}</strong></div>
         <div class="clean-progress" aria-label="환경 정화 진행률 ${cleanPercent}%"><span></span></div>
       </div>
       <div class="quiz-panel">
         <div class="quiz-top"><span>${diff.name} · 문제 ${session.index + 1}/${questions.length}</span><span id="timer" class="timer-pill">${timer ? `⏱ ${session.remaining}초` : "천천히 생각해요"}</span></div>
+        <div class="question-steps" aria-label="문제 진행 상황">${questionSteps}</div>
         <div class="question-box">
           <div class="question-label">${label}</div>
           <div class="${questionClass}">${question.prompt}</div>
@@ -484,7 +497,7 @@ function renderEnding() {
     <section class="screen ending-card">
       <p class="eyebrow">우리 모두의 해피 엔딩</p>
       <h2>미안해, 나무나라야. 이제 함께 지킬게!</h2>
-      <div class="ending-characters" aria-hidden="true"><span>👩🏻</span><span>🧒🏻</span><span>👨🏻</span><span>🤝</span><span>🌳</span></div>
+      <img class="ending-image" src="assets/images/hero-adventure.webp" width="900" height="900" alt="깨끗해진 자연에서 악당 나무와 마주한 동글동글 가족">
       <p>용암이 식자 동글동글 가족이 집으로 돌아가는 길이 나타났어요. 가족은 나무나라의 아픔을 몰랐던 일을 진심으로 사과했어요. 악당 나무도 화난 마음을 내려놓았지요. 모두는 매연과 쓰레기를 줄이고 나무를 아끼기로 약속했어요.</p>
       <div class="promise-box">🌏 “우리말을 바르게 사용하고, 자연을 깨끗하게 지키겠습니다!”</div>
       <p>국어의 힘으로 세 나라와 가족, 그리고 악당 나무의 마음까지 구했어요. <strong>동글동글 국어 구조대 임무 완료!</strong></p>

@@ -31,6 +31,7 @@ python3 -m http.server 8000
 - HTML5
 - CSS3 반응형 디자인 및 애니메이션
 - Vanilla JavaScript
+- 게임 전용 AI 일러스트 4종(WebP 최적화)
 - 브라우저 `localStorage`를 이용한 진행 기록 저장
 - Web Audio API를 이용한 간단한 효과음
 
@@ -40,6 +41,14 @@ python3 -m http.server 8000
 - 오답이어도 다시 생각하고 도전하는 방식
 - 키보드 조작, 큰 글자와 버튼, 화면 읽기 보조 문구 지원
 - 국어 학습과 환경 보호 메시지를 하나의 이야기로 연결
+- 동글동글한 캐릭터, 스테이지 미리보기, 문제 진행 발자국 등 초등학교 3학년 눈높이의 UI
+
+## 이미지 파일
+
+- `assets/images/hero-adventure.webp` — 시작 화면과 엔딩
+- `assets/images/stage-choseong.webp` — 초성나라
+- `assets/images/stage-proverb.webp` — 속담나라
+- `assets/images/stage-wordchain.webp` — 용암 끝말잇기
 
 ## 저작권
 
