@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173f5f">
+  <meta name="description" content="국어 퀴즈를 풀며 오염된 세 나라를 구하는 초등학생용 학습 게임">
+  <title>동글동글 국어 구조대</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">게임으로 바로 가기</a>
+  <div class="page-shell">
+    <header class="topbar">
+      <button class="brand" type="button" data-action="home" aria-label="처음 화면으로">
+        <span class="brand-mark" aria-hidden="true">ㄱ</span>
+        <span>동글동글 국어 구조대</span>
+      </button>
+      <div class="top-actions">
+        <div class="leaf-score" aria-label="모은 새싹 수">
+          <span aria-hidden="true">🌱</span><strong id="leaf-count">0</strong>
+        </div>
+        <button class="icon-button" id="sound-button" type="button" aria-label="효과음 끄기" title="효과음 켜기/끄기">🔊</button>
+      </div>
+    </header>
+
+    <main id="app" tabindex="-1" aria-live="polite"></main>
+
+    <footer>
+      <span>초등학교 창의적 개발물 프로젝트</span>
+      <span aria-hidden="true">•</span>
+      <span>우리말과 환경을 함께 지켜요!</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="assertive"></div>
+  <div id="confetti" aria-hidden="true"></div>
+  <script src="game.js"></script>
+</body>
+</html>
