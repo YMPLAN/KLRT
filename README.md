@@ -45,10 +45,15 @@ python3 -m http.server 8000
 
 ## 이미지 파일
 
-- `assets/images/hero-adventure.webp` — 시작 화면과 엔딩
-- `assets/images/stage-choseong.webp` — 초성나라
-- `assets/images/stage-proverb.webp` — 속담나라
-- `assets/images/stage-wordchain.webp` — 용암 끝말잇기
+- `assets/images/character-son.webp` — 아들 캐릭터
+- `assets/images/character-mother.webp` — 엄마 캐릭터
+- `assets/images/character-father.webp` — 아빠 캐릭터
+- `assets/images/character-villain-tree.webp` — 악당 나무 캐릭터
+- `assets/images/stage-choseong-v2.webp` — 캐릭터 배치용 초성나라 배경
+- `assets/images/stage-proverb-v2.webp` — 캐릭터 배치용 속담나라 배경
+- `assets/images/stage-wordchain-v2.webp` — 캐릭터 배치용 용암 끝말잇기 배경
+
+캐릭터 4종은 프로젝트 참여 어린이가 직접 그린 원화를 참고해 색상, 가면, 꼬리, 머리, 수염, 나무 무늬 등 고유한 특징을 살려 제작했습니다.
 
 ## 저작권
 
