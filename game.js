@@ -121,6 +121,21 @@ const GAME_DATA = {
   }
 };
 
+const PURIFICATION_EFFECTS = {
+  choseong: {
+    callout: "맑은 공기 충전!",
+    particles: ["🍃", "✨", "💨", "🌱"]
+  },
+  proverb: {
+    callout: "바다가 맑아졌어요!",
+    particles: ["💧", "🫧", "✨", "🐟"]
+  },
+  wordchain: {
+    callout: "시원한 비로 정화!",
+    particles: ["💧", "☔", "✨", "🌱"]
+  }
+};
+
 const PROGRESS_VERSION = 2;
 const defaultProgress = {
   version: PROGRESS_VERSION,
@@ -356,12 +371,14 @@ function renderQuestion() {
         <img class="scene-tree" src="assets/images/character-villain-tree.webp" alt="">
       </div>`
     : `<div class="scene-cast solo-cast ${stage.id}" aria-hidden="true"><img class="scene-son" src="assets/images/character-son.webp" alt=""></div>`;
+  const purificationEffect = buildPurificationEffect(stage.id);
 
   setScreen(`
     <section class="screen game-layout">
       <div class="scene ${stage.id}" style="--pollution:${pollution};--clean:${cleanPercent}%;--trash-opacity:${1 - cleanPercent / 120}">
         <div class="scene-title"><strong>${stage.icon} ${stage.title}</strong><span class="clean-label">정화 ${cleanPercent}%</span></div>
         ${sceneCharacters}
+        ${purificationEffect}
         <div class="scene-message"><span aria-hidden="true">✨</span><strong>${session.index === 0 ? "정화를 시작해요!" : "점점 깨끗해져요!"}</strong></div>
         <div class="clean-progress" aria-label="환경 정화 진행률 ${cleanPercent}%"><span></span></div>
       </div>
@@ -389,6 +406,48 @@ function renderQuestion() {
   session.accepting = true;
   if (isTextInput) document.querySelector("#answer-input")?.focus();
   if (timer) beginTimer(timer);
+}
+
+function buildPurificationEffect(stageId) {
+  const effect = PURIFICATION_EFFECTS[stageId];
+  const vectors = [
+    [-128, -74], [-72, -120], [0, -138], [75, -112],
+    [132, -62], [148, 16], [92, 88], [22, 118],
+    [-62, 104], [-126, 58], [-154, -2], [58, 36]
+  ];
+  const particles = vectors.map(([x, y], index) => {
+    const symbol = effect.particles[index % effect.particles.length];
+    return `<span class="purify-particle" style="--x:${x}px;--y:${y}px;--delay:${(index % 4) * .045}s">${symbol}</span>`;
+  }).join("");
+  return `<div class="purify-effect" aria-hidden="true">
+    <span class="purify-flash"></span>
+    <span class="purify-ring ring-one"></span>
+    <span class="purify-ring ring-two"></span>
+    ${particles}
+    <strong class="purify-callout">${effect.callout}</strong>
+  </div>`;
+}
+
+function triggerPurificationAnimation(stageId) {
+  const scene = document.querySelector(".scene");
+  if (!scene) return;
+  const questions = GAME_DATA.stages[session.stageIndex].questions[session.difficulty];
+  const completedRatio = (session.index + 1) / questions.length;
+  const cleanPercent = Math.round(completedRatio * 100);
+  const pollution = Math.max(.05, .76 - completedRatio * .68).toFixed(2);
+  const label = scene.querySelector(".clean-label");
+  const progressBar = scene.querySelector(".clean-progress");
+  const message = scene.querySelector(".scene-message strong");
+
+  scene.classList.add("purifying");
+  if (message) message.textContent = PURIFICATION_EFFECTS[stageId].callout;
+  window.setTimeout(() => {
+    scene.style.setProperty("--clean", `${cleanPercent}%`);
+    scene.style.setProperty("--pollution", pollution);
+    scene.style.setProperty("--trash-opacity", String(1 - cleanPercent / 120));
+    if (label) label.textContent = `정화 ${cleanPercent}%`;
+    if (progressBar) progressBar.setAttribute("aria-label", `환경 정화 진행률 ${cleanPercent}%`);
+  }, 260);
 }
 
 function beginTimer(seconds) {
@@ -430,12 +489,14 @@ function checkAnswer(value, button = null) {
     session.earned += reward;
     const feedback = document.querySelector("#feedback");
     if (feedback) {
-      feedback.textContent = `정답! 맑아지고 있어요. 🌱 +${reward}`;
+      feedback.textContent = `정답! 아들이 신나게 정화하고 있어요. 🌱 +${reward}`;
       feedback.className = "feedback good";
     }
     if (button) button.classList.add("correct");
-    playSound("correct");
-    window.setTimeout(nextQuestion, 850);
+    triggerPurificationAnimation(stage.id);
+    playSound("purify");
+    const animationTime = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 500 : 1550;
+    window.setTimeout(nextQuestion, animationTime);
   } else {
     if (button) {
       button.classList.add("wrong");
@@ -569,7 +630,7 @@ function playSound(type) {
     audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
-    const notes = { click: 420, correct: 660, wrong: 180, clear: 880 };
+    const notes = { click: 420, correct: 660, purify: 740, wrong: 180, clear: 880 };
     oscillator.frequency.value = notes[type] || 420;
     oscillator.type = type === "wrong" ? "sawtooth" : "sine";
     gain.gain.setValueAtTime(.08, audioContext.currentTime);
